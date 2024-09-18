@@ -1,0 +1,14 @@
+{
+  "name": "node_mysql_html_project",
+  "version": "1.0.0",
+  "description": "Node.js script to serve an HTML page and connect to MySQL",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js"
+  },
+  "dependencies": {
+    "express": "^4.17.1",
+    "mysql2": "^2.3.3",
+    "ejs": "^3.1.6"
+  }
+}

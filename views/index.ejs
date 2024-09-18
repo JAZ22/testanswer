@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Student Grades</title>
+    <link rel="stylesheet" type="text/css" href="/styles.css">
+</head>
+<body>
+    <h1>Student Grades</h1>
+    <form method="GET">
+        <input type="text" name="search" placeholder="Search by student name">
+        <select name="filter">
+            <option value="">All</option>
+            <option value="PASS">PASS</option>
+            <option value="FAIL">FAIL</option>
+        </select>
+        <input type="submit" value="Search/Filter">
+    </form>
+    <table>
+        <thead>
+            <tr>
+                <th>Student Name</th>
+                <th>Subject Name</th>
+                <th>Grade</th>
+                <th>Remarks</th>
+            </tr>
+        </thead>
+        <tbody>
+            <% students.forEach(function(student) { %>
+            <tr>
+                <td><%= student.student_name %></td>
+                <td><%= student.subject_name %></td>
+                <td><%= student.grade %></td>
+                <td><%= student.remarks %></td>
+            </tr>
+            <% }); %>
+        </tbody>
+    </table>
+</body>
+</html>
