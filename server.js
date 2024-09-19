@@ -42,29 +42,25 @@ app.get("/edit-student/:id", (req, res) => {
 // Get all students
 // Assuming you're using Express.js
 
-app.get('/students', (req, res) => {
-    const query = req.query.query || '';
-    const sortBy = req.query.sortBy || 'student_key';
-    const sortDirection = req.query.sortDirection === 'desc' ? -1 : 1;
+app.get('/students', async (req, res) => {
+    try {
+        const query = req.query.query || '';
+        const sortBy = req.query.sortBy || 'student_key';
+        const sortDirection = req.query.sortDirection === 'desc' ? 'DESC' : 'ASC';
 
-    let students = getStudentsFromDatabase(); // Fetch from your database
+        // Prepare the SQL query
+        let sql = `SELECT student_key, student_name, subject_key, grade, remarks FROM students WHERE student_name LIKE ? ORDER BY ${sortBy} ${sortDirection}`;
 
-    // Filter by search query (e.g., name)
-    if (query) {
-        students = students.filter(student =>
-            student.student_name.toLowerCase().includes(query.toLowerCase())
-        );
+        // Execute the SQL query with query params
+        const [students] = await pool.query(sql, [`%${query}%`]);
+
+        res.json(students); // Send back the students as JSON
+    } catch (err) {
+        console.error(err);
+        res.status(500).json({ error: 'Database query error' });
     }
-
-    // Sort by specified column and direction
-    students.sort((a, b) => {
-        if (a[sortBy] < b[sortBy]) return -1 * sortDirection;
-        if (a[sortBy] > b[sortBy]) return 1 * sortDirection;
-        return 0;
-    });
-
-    res.json(students);
 });
+
 
 
 // Get a single student by ID
