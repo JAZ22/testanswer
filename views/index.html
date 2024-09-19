@@ -69,5 +69,99 @@
             }
         }
     </script>
+    <script>
+    let studentsData = [];
+
+    // Fetch students from the server
+    function fetchStudents(query = '', sortBy = '', sortDirection = 'asc') {
+        fetch(`/students?query=${query}&sortBy=${sortBy}&sortDirection=${sortDirection}`)
+            .then(response => response.json())
+            .then(data => {
+                studentsData = data;
+                renderStudentsTable(data);
+            });
+    }
+
+    function renderStudentsTable(data) {
+        const tableBody = document.getElementById('student-list');
+        tableBody.innerHTML = ''; // Clear the table first
+        data.forEach(student => {
+            const row = `<tr>
+                <td>${student.student_key}</td>
+                <td>${student.student_name}</td>
+                <td>${student.subject_key}</td>
+                <td>${student.grade}</td>
+                <td>${student.remarks}</td>
+                <td>
+                    <a href="/edit-student/${student.student_key}" class="btn btn-warning btn-sm">Edit</a>
+                    <button onclick="deleteStudent(${student.student_key})" class="btn btn-danger btn-sm">Delete</button>
+                </td>
+            </tr>`;
+            tableBody.innerHTML += row;
+        });
+    }
+
+    // Event listener for the search button
+    document.getElementById('searchButton').addEventListener('click', function() {
+        const query = document.getElementById('searchInput').value;
+        fetchStudents(query);
+    });
+
+    // Sorting functionality
+    let currentSort = { column: '', direction: 'asc' };
+
+    document.getElementById('sortId').addEventListener('click', function() {
+        toggleSort('student_key');
+    });
+
+    document.getElementById('sortName').addEventListener('click', function() {
+        toggleSort('student_name');
+    });
+
+    document.getElementById('sortSubject').addEventListener('click', function() {
+        toggleSort('subject_key');
+    });
+
+    document.getElementById('sortGrade').addEventListener('click', function() {
+        toggleSort('grade');
+    });
+
+    function toggleSort(column) {
+        if (currentSort.column === column) {
+            currentSort.direction = currentSort.direction === 'asc' ? 'desc' : 'asc';
+        } else {
+            currentSort.column = column;
+            currentSort.direction = 'asc';
+        }
+        fetchStudents('', currentSort.column, currentSort.direction);
+    }
+
+    // Delete a student
+    function deleteStudent(id) {
+        if (confirm('Are you sure you want to delete this student?')) {
+            fetch(`/students/${id}`, {
+                method: 'DELETE'
+            }).then(() => fetchStudents());
+        }
+    }
+
+    // Download report
+    document.getElementById('downloadReport').addEventListener('click', function() {
+        const csvContent = "data:text/csv;charset=utf-8,"
+            + studentsData.map(student => 
+                `${student.student_key},${student.student_name},${student.subject_key},${student.grade},${student.remarks}`).join("\n");
+
+        const encodedUri = encodeURI(csvContent);
+        const link = document.createElement("a");
+        link.setAttribute("href", encodedUri);
+        link.setAttribute("download", "students_report.csv");
+        document.body.appendChild(link);
+        link.click();
+        document.body.removeChild(link);
+    });
+
+    // Initial fetch of students
+    fetchStudents();
+</script>
 </body>
 </html>
