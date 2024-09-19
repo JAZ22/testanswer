@@ -1,14 +1,19 @@
 {
   "name": "node_mysql_html_project",
   "version": "1.0.0",
-  "description": "Node.js script to serve an HTML page and connect to MySQL",
+  "description": "",
   "main": "server.js",
   "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
     "start": "node server.js"
   },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
   "dependencies": {
-    "express": "^4.17.1",
-    "mysql2": "^2.3.3",
-    "ejs": "^3.1.6"
+    "body-parser": "^1.20.3",
+    "dotenv": "^16.4.5",
+    "express": "^4.21.0",
+    "mysql2": "^3.11.3"
   }
 }
