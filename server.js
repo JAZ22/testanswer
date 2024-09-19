@@ -40,13 +40,32 @@ app.get("/edit-student/:id", (req, res) => {
 });
 
 // Get all students
-app.get("/students", (req, res) => {
-  const query = "SELECT * FROM mst_student";
-  db.query(query, (err, results) => {
-    if (err) return res.status(500).send(err);
-    res.json(results);
-  });
+// Assuming you're using Express.js
+
+app.get('/students', (req, res) => {
+    const query = req.query.query || '';
+    const sortBy = req.query.sortBy || 'student_key';
+    const sortDirection = req.query.sortDirection === 'desc' ? -1 : 1;
+
+    let students = getStudentsFromDatabase(); // Fetch from your database
+
+    // Filter by search query (e.g., name)
+    if (query) {
+        students = students.filter(student =>
+            student.student_name.toLowerCase().includes(query.toLowerCase())
+        );
+    }
+
+    // Sort by specified column and direction
+    students.sort((a, b) => {
+        if (a[sortBy] < b[sortBy]) return -1 * sortDirection;
+        if (a[sortBy] > b[sortBy]) return 1 * sortDirection;
+        return 0;
+    });
+
+    res.json(students);
 });
+
 
 // Get a single student by ID
 app.get("/students/:id", (req, res) => {
